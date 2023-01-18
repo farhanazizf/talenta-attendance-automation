@@ -45,4 +45,4 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Checking In
-        run: node script.js
+        run: node index.js
