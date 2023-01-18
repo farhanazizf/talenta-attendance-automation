@@ -1,0 +1,48 @@
+name: Check-in
+on:
+  # schedule every day at 08:00 (UTC+7) / 03:00 (UTC)
+  # in the past, "0 3 * * *" runs at around 10:00 (UTC+7), so I changed it to "0 1 * * *" to run at 08:00 (UTC+7)
+  schedule:
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+    inputs:
+      ACCOUNT_EMAIL:
+        description: "Email Account"
+        required: true
+      ACCOUNT_PASSWORD:
+        description: "Password Account"
+        required: true
+      GEO_LATITUDE:
+        description: "Geolocation Latitude"
+        required: true
+        default: "-7.7865454"
+      GEO_LONGITUDE:
+        description: "Geo Longitude"
+        required: true
+        default: "110.3654918"
+
+jobs:
+  check-in:
+    env:
+      ACCOUNT_EMAIL: ${{ secrets.ACCOUNT_EMAIL || inputs.ACCOUNT_EMAIL }}
+      ACCOUNT_PASSWORD: ${{ secrets.ACCOUNT_PASSWORD || inputs.ACCOUNT_PASSWORD }}
+      GEO_LATITUDE: ${{ secrets.GEO_LATITUDE || inputs.GEO_LATITUDE }}
+      GEO_LONGITUDE: ${{ secrets.GEO_LONGITUDE || inputs.GEO_LONGITUDE }}
+      CHECK_TYPE: "CHECK_IN"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 6.32.9
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "pnpm"
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Checking In
+        run: node script.js
