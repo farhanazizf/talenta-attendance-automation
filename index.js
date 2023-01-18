@@ -5,10 +5,10 @@ import invariant from "tiny-invariant";
 dotenv.config();
 
 // make sure all env variables are set
-invariant(process.env.GEO_LATITUDE, "GEO_LATITUDE is required");
-invariant(process.env.GEO_LONGITUDE, "GEO_LONGITUDE is required");
-invariant(process.env.ACCOUNT_EMAIL, "ACCOUNT_EMAIL is required");
-invariant(process.env.ACCOUNT_PASSWORD, "ACCOUNT_PASSWORD is required");
+invariant(process.env.GEO_LATITUDE, "secret GEO_LATITUDE is required");
+invariant(process.env.GEO_LONGITUDE, "secret GEO_LONGITUDE is required");
+invariant(process.env.ACCOUNT_EMAIL, "secret ACCOUNT_EMAIL is required");
+invariant(process.env.ACCOUNT_PASSWORD, "secret ACCOUNT_PASSWORD is required");
 
 const isHeadless =
   (process.env.HEADLESS_BROWSER ?? "true") === "true" ? true : false;
