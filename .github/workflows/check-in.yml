@@ -5,29 +5,14 @@ on:
   schedule:
     - cron: "0 1 * * *"
   workflow_dispatch:
-    inputs:
-      ACCOUNT_EMAIL:
-        description: "Email Account"
-        required: true
-      ACCOUNT_PASSWORD:
-        description: "Password Account"
-        required: true
-      GEO_LATITUDE:
-        description: "Geolocation Latitude"
-        required: true
-        default: "-7.7865454"
-      GEO_LONGITUDE:
-        description: "Geo Longitude"
-        required: true
-        default: "110.3654918"
 
 jobs:
   check-in:
     env:
-      ACCOUNT_EMAIL: ${{ secrets.ACCOUNT_EMAIL || inputs.ACCOUNT_EMAIL }}
-      ACCOUNT_PASSWORD: ${{ secrets.ACCOUNT_PASSWORD || inputs.ACCOUNT_PASSWORD }}
-      GEO_LATITUDE: ${{ secrets.GEO_LATITUDE || inputs.GEO_LATITUDE }}
-      GEO_LONGITUDE: ${{ secrets.GEO_LONGITUDE || inputs.GEO_LONGITUDE }}
+      ACCOUNT_EMAIL: ${{ secrets.ACCOUNT_EMAIL }}
+      ACCOUNT_PASSWORD: ${{ secrets.ACCOUNT_PASSWORD }}
+      GEO_LATITUDE: ${{ secrets.GEO_LATITUDE }}
+      GEO_LONGITUDE: ${{ secrets.GEO_LONGITUDE }}
       CHECK_TYPE: "CHECK_IN"
     runs-on: ubuntu-latest
     steps:
