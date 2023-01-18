@@ -1,90 +1,93 @@
 import playwright from "playwright-chromium";
 import dotenv from "dotenv";
+import invariant from "tiny-invariant";
 
-(async () => {
-	dotenv.config();
-	const isHeadless =
-		(process.env.HEADLESS_BROWSER ?? "true") === "true" ? true : false;
+dotenv.config();
 
-	const browser = await playwright["chromium"].launch({
-		headless: isHeadless,
-	});
+// make sure all env variables are set
+invariant(process.env.GEO_LATITUDE, "GEO_LATITUDE is required");
+invariant(process.env.GEO_LONGITUDE, "GEO_LONGITUDE is required");
+invariant(process.env.ACCOUNT_EMAIL, "ACCOUNT_EMAIL is required");
+invariant(process.env.ACCOUNT_PASSWORD, "ACCOUNT_PASSWORD is required");
 
-	const context = await browser.newContext({
-		viewport: { width: 1080, height: 560 },
-		geolocation: {
-			latitude: Number(process.env.GEO_LATITUDE),
-			longitude: Number(process.env.GEO_LONGITUDE),
-		},
-		permissions: ["geolocation"],
-	});
+const isHeadless =
+  (process.env.HEADLESS_BROWSER ?? "true") === "true" ? true : false;
 
-	const page = await context.newPage();
+const browser = await playwright["chromium"].launch({
+  headless: isHeadless,
+});
 
-	console.log("Opening login page...");
-	await page.goto(
-		"https://account.mekari.com/users/sign_in?client_id=TAL-73645&return_to=L2F1dGg_Y2xpZW50X2lkPVRBTC03MzY0NSZyZXNwb25zZV90eXBlPWNvZGUmc2NvcGU9c3NvOnByb2ZpbGU%3D",
-	);
+const context = await browser.newContext({
+  viewport: { width: 1080, height: 560 },
+  geolocation: {
+    latitude: Number(process.env.GEO_LATITUDE),
+    longitude: Number(process.env.GEO_LONGITUDE),
+  },
+  permissions: ["geolocation"],
+});
 
-	await page.setViewportSize({ width: 1080, height: 560 });
+const page = await context.newPage();
 
-	console.log("Filling in account email & password...");
-	await page.click("#user_email");
-	await page.fill("#user_email", process.env.ACCOUNT_EMAIL);
+console.log("Opening login page...");
+await page.goto(
+  "https://account.mekari.com/users/sign_in?client_id=TAL-73645&return_to=L2F1dGg_Y2xpZW50X2lkPVRBTC03MzY0NSZyZXNwb25zZV90eXBlPWNvZGUmc2NvcGU9c3NvOnByb2ZpbGU%3D"
+);
 
-	await page.press("#user_email", "Tab");
-	await page.fill("#user_password", process.env.ACCOUNT_PASSWORD);
+await page.setViewportSize({ width: 1080, height: 560 });
 
-	console.log("Click on signin...");
-	await Promise.all([
-		page.click("#new-signin-button"),
-		page.waitForNavigation(),
-	]);
+console.log("Filling in account email & password...");
+await page.click("#user_email");
+await page.fill("#user_email", process.env.ACCOUNT_EMAIL);
 
-	const dashboardNav = page.getByText("Dashboard");
-	// check if dashboard nav is exist
-	if ((await dashboardNav.innerText()) === "Dashboard") {
-		console.log("Successfully Logged in...");
-	}
+await page.press("#user_email", "Tab");
+await page.fill("#user_password", process.env.ACCOUNT_PASSWORD);
 
-	await Promise.all([
-		page.click('[href="/live-attendance"]'),
-		page.waitForNavigation(),
-	]);
+console.log("Click on signin...");
+await Promise.all([page.click("#new-signin-button"), page.waitForNavigation()]);
 
-	console.log("Already inside Live Attendance Page...");
+const dashboardNav = page.getByText("Dashboard");
+// check if dashboard nav is exist
+if ((await dashboardNav.innerText()) === "Dashboard") {
+  console.log("Successfully Logged in...");
+}
 
-	//-- debug live attendance page
-	// main = await page.waitForSelector('main')
-	// console.log('-- Main Content \n', await main.innerText())
+await Promise.all([
+  page.click('[href="/live-attendance"]'),
+  page.waitForNavigation(),
+]);
 
-	const currentTime = await page.waitForSelector(".current-time");
-	const checkIn = await page.waitForSelector(".col:nth-child(1) > .btn");
-	const checkOut = await page.waitForSelector(".col:nth-child(2) > .btn");
+console.log("Already inside Live Attendance Page...");
 
-	console.log("Current Time: ", await currentTime.innerText());
-	console.log("Found: ", await checkIn.innerText());
-	console.log("Found: ", await checkOut.innerText());
+//-- debug live attendance page
+// main = await page.waitForSelector('main')
+// console.log('-- Main Content \n', await main.innerText())
 
-	if (process.env.CHECK_TYPE === "CHECK_IN") {
-		console.log("Checking In...");
-		await page.click(".col:nth-child(1) > .btn");
-	} else if (process.env.CHECK_TYPE === "CHECK_OUT") {
-		console.log("Checking Out...");
-		await page.click(".col:nth-child(2) > .btn");
-	}
+const currentTime = await page.waitForSelector(".current-time");
+const checkIn = await page.waitForSelector(".col:nth-child(1) > .btn");
+const checkOut = await page.waitForSelector(".col:nth-child(2) > .btn");
 
-	if (process.env.CHECK_TYPE === "CHECK_IN") {
-		const toast = page.getByText("Successfully Clock In");
-		if ((await toast.innerText()) === "Successfully Clock In") {
-			console.log("Successfully Clock In");
-		}
-	} else if (process.env.CHECK_TYPE === "CHECK_OUT") {
-		const toast = page.getByText("Successfully Clock Out");
-		if ((await toast.innerText()) === "Successfully Clock Out") {
-			console.log("Successfully Clock Out");
-		}
-	}
+console.log("Current Time: ", await currentTime.innerText());
+console.log("Found: ", await checkIn.innerText());
+console.log("Found: ", await checkOut.innerText());
 
-	await browser.close();
-})();
+if (process.env.CHECK_TYPE === "CHECK_IN") {
+  console.log("Checking In...");
+  await page.click(".col:nth-child(1) > .btn");
+} else if (process.env.CHECK_TYPE === "CHECK_OUT") {
+  console.log("Checking Out...");
+  await page.click(".col:nth-child(2) > .btn");
+}
+
+if (process.env.CHECK_TYPE === "CHECK_IN") {
+  const toast = page.getByText("Successfully Clock In");
+  if ((await toast.innerText()) === "Successfully Clock In") {
+    console.log("Successfully Clock In");
+  }
+} else if (process.env.CHECK_TYPE === "CHECK_OUT") {
+  const toast = page.getByText("Successfully Clock Out");
+  if ((await toast.innerText()) === "Successfully Clock Out") {
+    console.log("Successfully Clock Out");
+  }
+}
+
+await browser.close();
