@@ -5,7 +5,7 @@ This is a project to automate the process of check-in and check-out of talenta w
 To use this project, you just need to fork this project and set the environment variables (**secrets**) on github action.
 Set the **github secrets** on settings > Secrets and environment variables > Actions.
 
-Environment variables that you need to set:
+Environment variables (**SECRETS**) that you need to set:
 
 - `ACCOUNT_EMAIL` : talenta username
 - `ACCOUNT_PASSWORD` : talenta password
