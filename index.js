@@ -74,7 +74,6 @@ const main = async () => {
     return;
   }
 
-  console.log("myName -->", myName);
   const today = dayjs().tz("Asia/Jakarta").format("D MMM YYYY");
 
   // go to "My Attendance Logs"
@@ -85,13 +84,18 @@ const main = async () => {
   );
 
   const rowToday = page.locator("tr", { hasText: today });
-  const checkInToday = await rowToday.locator("td:nth-child(2)").innerText();
+  const columnCheckDayOff = await rowToday
+    .locator("td:nth-child(2)")
+    .innerText();
 
   // N = not dayoff/holiday
-  const isTodayHoliday = checkInToday.trim() !== "N";
+  const columnCheckDayOffTrimmed = columnCheckDayOff.trim();
+  const isTodayHoliday = columnCheckDayOffTrimmed !== "N";
 
   if (isTodayHoliday) {
-    console.log("Today is holiday, skipping check in/out...");
+    console.log(
+      `Today is ${columnCheckDayOffTrimmed}, skipping check in/out...`
+    );
     await browser.close();
     return;
   }
