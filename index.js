@@ -49,7 +49,7 @@ const main = async () => {
   await page.press("#user_email", "Tab");
   await page.fill("#user_password", process.env.ACCOUNT_PASSWORD);
 
-  console.log("Click on signin...");
+  console.log("Signing in...");
   await Promise.all([
     page.click("#new-signin-button"),
     page.waitForNavigation(),
