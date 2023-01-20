@@ -1,9 +1,9 @@
 name: Check-out
 on:
-  # schedule every day at 17:00 (UTC+7) / 12:00 (UTC)
-  # in the past, "0 12 * * *" runs at around 19:30 (UTC+7), so I changed it to "30 10 * * *" to run at 17:30 (UTC+7)
+  # schedule every weekdays at 17:00 (UTC+7) / 12:00 (UTC)
+  # in the past, "0 12 * * 1-5" runs at around 19:30 (UTC+7), so I changed it to "30 10 * * 1-5" to run at 17:30 (UTC+7)
   schedule:
-    - cron: "30 10 * * *"
+    - cron: "30 10 * * 1-5"
   workflow_dispatch:
 
 jobs:
