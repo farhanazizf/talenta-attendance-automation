@@ -1,9 +1,12 @@
 name: Check-in
 on:
-  # schedule every day at 08:00 (UTC+7) / 03:00 (UTC)
+  # schedule every day at 08:00 (UTC+7) / 03:00 (UTC) -> still late check-in
   # in the past, "0 3 * * *" runs at around 10:00 (UTC+7), so I changed it to "0 1 * * *" to run at 08:00 (UTC+7)
+
+  # Still late check-in https://github.com/helmisatria/talenta-attendance-automation/issues/5,
+  # Need to change the cron to "0 0 * * *" to run at around 08:00 (UTC+7)
   schedule:
-    - cron: "0 1 * * *"
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 jobs:
