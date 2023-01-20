@@ -1,6 +1,12 @@
 import playwright from "playwright-chromium";
 import dotenv from "dotenv";
 import invariant from "tiny-invariant";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
+import timezone from "dayjs/plugin/timezone.js";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 dotenv.config();
 
@@ -10,9 +16,27 @@ invariant(process.env.GEO_LONGITUDE, "secret GEO_LONGITUDE is required");
 invariant(process.env.ACCOUNT_EMAIL, "secret ACCOUNT_EMAIL is required");
 invariant(process.env.ACCOUNT_PASSWORD, "secret ACCOUNT_PASSWORD is required");
 
+const PUBLIC_HOLIDAYS = [
+  "23 Jan 2023",
+  "23 Mar 2023",
+  "21 Apr 2023",
+  "24 Apr 2023",
+  "25 Apr 2023",
+  "26 Apr 2023",
+  "2 Jun 2023",
+  "26 Des 2023",
+];
+
 const main = async () => {
   const isHeadless =
     (process.env.HEADLESS_BROWSER ?? "true") === "true" ? true : false;
+
+  const TODAY = dayjs().tz("Asia/Jakarta").format("D MMM YYYY");
+
+  if (PUBLIC_HOLIDAYS.includes(TODAY)) {
+    console.log("Today is public holiday, skipping check in/out...");
+    return;
+  }
 
   const browser = await playwright["chromium"].launch({
     headless: isHeadless,
@@ -43,7 +67,7 @@ const main = async () => {
   await page.press("#user_email", "Tab");
   await page.fill("#user_password", process.env.ACCOUNT_PASSWORD);
 
-  console.log("Click on signin...");
+  console.log("Signing in...");
   await Promise.all([
     page.click("#new-signin-button"),
     page.waitForNavigation(),
@@ -68,8 +92,32 @@ const main = async () => {
     return;
   }
 
+  // go to "My Attendance Logs"
+  await page.click("text=My Attendance Logs");
+  await page.waitForSelector(`h3:text("${myName}")`);
+  console.log(
+    "Already inside My Attendance Logs to check holiday or day-off..."
+  );
+
+  const rowToday = page.locator("tr", { hasText: TODAY });
+  const columnCheckDayOff = await rowToday
+    .locator("td:nth-child(2)")
+    .innerText();
+
+  // N = not dayoff/holiday
+  const columnCheckDayOffTrimmed = columnCheckDayOff.trim();
+  const isTodayHoliday = columnCheckDayOffTrimmed !== "N";
+
+  if (isTodayHoliday) {
+    console.log(
+      `Today is ${columnCheckDayOffTrimmed}, skipping check in/out...`
+    );
+    await browser.close();
+    return;
+  }
+
   await Promise.all([
-    page.click('[href="/live-attendance"]'),
+    page.goto("https://hr.talenta.co/live-attendance"),
     page.waitForNavigation(),
   ]);
 
