@@ -1,6 +1,12 @@
 import playwright from "playwright-chromium";
 import dotenv from "dotenv";
 import invariant from "tiny-invariant";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
+import timezone from "dayjs/plugin/timezone.js";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 dotenv.config();
 
@@ -68,8 +74,30 @@ const main = async () => {
     return;
   }
 
+  console.log("myName -->", myName);
+  const today = dayjs().tz("Asia/Jakarta").format("D MMM YYYY");
+
+  // go to "My Attendance Logs"
+  await page.click("text=My Attendance Logs");
+  await page.waitForSelector(`h3:text("${myName}")`);
+  console.log(
+    "Already inside My Attendance Logs to check holiday or day-off..."
+  );
+
+  const rowToday = page.locator("tr", { hasText: today });
+  const checkInToday = await rowToday.locator("td:nth-child(2)").innerText();
+
+  // N = not dayoff/holiday
+  const isTodayHoliday = checkInToday.trim() !== "N";
+
+  if (isTodayHoliday) {
+    console.log("Today is holiday, skipping check in/out...");
+    await browser.close();
+    return;
+  }
+
   await Promise.all([
-    page.click('[href="/live-attendance"]'),
+    page.goto("https://hr.talenta.co/live-attendance"),
     page.waitForNavigation(),
   ]);
 
