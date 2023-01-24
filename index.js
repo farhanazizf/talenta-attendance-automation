@@ -100,18 +100,29 @@ const main = async () => {
   );
 
   const rowToday = page.locator("tr", { hasText: TODAY });
+
   const columnCheckDayOff = await rowToday
     .locator("td:nth-child(2)")
     .innerText();
 
-  // N = not dayoff/holiday
-  const columnCheckDayOffTrimmed = columnCheckDayOff.trim();
-  const isTodayHoliday = columnCheckDayOffTrimmed !== "N";
+  const columnCheckOnLeave = await rowToday
+    .locator("td:nth-child(7)")
+    .innerText();
 
-  if (isTodayHoliday) {
-    console.log(
-      `Today is ${columnCheckDayOffTrimmed}, skipping check in/out...`
-    );
+  // N = not dayoff/holiday
+  const isTodayHoliday = columnCheckDayOff.trim() !== "N";
+
+  // CT = cuti
+  const isTodayOnLeave = columnCheckOnLeave.trim() === "CT";
+
+  const shouldSkipCheckInOut = isTodayHoliday || isTodayOnLeave;
+
+  if (shouldSkipCheckInOut) {
+    const consoleText = isTodayOnLeave
+      ? "You are on leave (cuti) today, skipping check in/out..."
+      : "You are on holiday today, skipping check in/out...";
+    console.log(consoleText);
+
     await browser.close();
     return;
   }
