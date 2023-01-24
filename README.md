@@ -15,3 +15,7 @@ Environment variables (**SECRETS**) that you need to set:
 Github action workflow will run every (around) 08:00 (UTC+7) for check-in and (around) 17:30 (UTC+7) for check-out.
 
 Why (around)? Because github workflow doesn't guarantee that your job will running on time.
+
+## How to use (video guidance)
+
+Watch here using your work email: https://drive.google.com/file/d/164s4TqsX4YAyUa4YeznkHeLllHXeuydL/view?usp=share_link
