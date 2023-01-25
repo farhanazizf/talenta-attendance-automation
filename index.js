@@ -17,14 +17,24 @@ invariant(process.env.ACCOUNT_EMAIL, "secret ACCOUNT_EMAIL is required");
 invariant(process.env.ACCOUNT_PASSWORD, "secret ACCOUNT_PASSWORD is required");
 
 const PUBLIC_HOLIDAYS = [
-  "23 Jan 2023",
-  "23 Mar 2023",
-  "21 Apr 2023",
-  "24 Apr 2023",
-  "25 Apr 2023",
-  "26 Apr 2023",
-  "2 Jun 2023",
-  "26 Des 2023",
+  "23 Jan 2023", // cuti bersama imlek
+  "23 Mar 2023", // nyepi
+  "23 Mar 2023", // cuti bersama nyepi
+  "7 Apr 2023", // wafat isa almasih
+  "21 Apr 2023", // idul fitri
+  "24 Apr 2023", // idul fitri
+  "25 Apr 2023", // idul fitri
+  "26 Apr 2023", // idul fitri
+  "1 Mei 2023", // hari buruh
+  "18 Mei 2023", // kenaikan isa almasih
+  "1 Jun 2023", // hari lahir pancasila
+  "2 Jun 2023", // cuti bersama waisak
+  "29 Jun 2023", // idul adha
+  "19 Jul 2023", // tahun baru islam
+  "17 Aug 2023", // kemerdekaan indonesia
+  "28 Sep 2023", // maulid nabi muhammad
+  "25 Dec 2023", // natal
+  "26 Dec 2023", // cuti bersama natal
 ];
 
 const main = async () => {
