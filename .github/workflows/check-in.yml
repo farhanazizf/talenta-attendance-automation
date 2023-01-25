@@ -6,8 +6,10 @@ on:
 
   # Still late check-in https://github.com/helmisatria/talenta-attendance-automation/issues/5,
   # Need to change the cron to "0 0 * * 1-5" to run at around 08:00 (UTC+7)
+
+  # changed to "20 0 * * 1-5" from "0 0 * * 1-5" expecting will run at around 08:20 (previously around 08:00)
   schedule:
-    - cron: "0 0 * * 1-5"
+    - cron: "20 0 * * 1-5"
   workflow_dispatch:
 
 jobs:
