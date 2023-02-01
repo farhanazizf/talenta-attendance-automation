@@ -109,7 +109,7 @@ const main = async () => {
     "Already inside My Attendance Logs to check holiday or day-off..."
   );
 
-  const rowToday = page.locator("tr", { hasText: TODAY });
+  const rowToday = page.locator("tr", { hasText: TODAY }).first();
 
   const columnCheckDayOff = await rowToday
     .locator("td:nth-child(2)")
