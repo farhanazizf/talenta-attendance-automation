@@ -9,7 +9,7 @@ on:
 
   # changed to "20 0 * * 1-5" from "0 0 * * 1-5" expecting will run at around 08:20 (previously around 08:00)
   schedule:
-    - cron: "20 1 * * 1-5"
+    - cron: "20 0 * * 1-5"
   workflow_dispatch:
 
 jobs:
